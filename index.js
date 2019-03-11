@@ -41,7 +41,11 @@ async function writeWebViewReaderFileAsync(data: string): Promise<*> {
   const { exist, md5 } = await getInfoAsync(bundleJsPath, { md5: true })
   const bundleContainer = require('./bundleContainer')
   if (!exist || bundleContainer.getBundleMd5() !== md5) {
-    await writeAsStringAsync(bundleJsPath, bundleContainer.getBundle())
+    const bundle = bundleContainer.getBundle();
+    await writeAsStringAsync(bundleJsPath, bundle.replace(
+      'n.renderLoader=function(){return b.a.createElement("div",{style:{width:window.innerWidth,height:window.innerHeight,display:"flex",justifyContent:"center",alignItems:"center"}},b.a.createElement("p",{style:{color:"#fff"}},"Loading..."))',
+      'n.renderLoader=function(){return b.a.createElement("div",{style:{width:window.innerWidth,height:0,display:"flex",justifyContent:"center",alignItems:"center"}},b.a.createElement("p",{style:{color:"#fff"}},""))'
+    ))
   }
   await writeAsStringAsync(htmlPath, viewerHtml(data))
 }
